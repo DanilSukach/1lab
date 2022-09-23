@@ -1,20 +1,56 @@
 import requests
 import os
 from bs4 import BeautifulSoup
-url='https://yandex.ru/images/search?text=tiger&lr=29388'
-resp=requests.get(url).text
-soup=BeautifulSoup(resp,'lxml')
-resp1=soup.find_all("div",class_="serp-item")
-index=1
-for i in resp1:
-    url_img=i.find("img",class_="serp-item__thumb justifier__thumb").get("src")
-    print('https:' + url_img)
-    img=requests.get('https:' + url_img).content
-    a=str(index)
-    ul='tiger/' + a + '.jpg'
-    print(ul)
-    if not os.path.isdir("tiger"):
-        os.mkdir("tiger")
-    with open(ul,'wb') as handler:
-        handler.write(img)
-    index+=1
+from selenium import webdriver
+import time
+url="https://yandex.ru/images/search?text=tiger"
+driver=webdriver.Chrome(executable_path='C:/Users/user/Desktop/1lab/chromedriver.exe')
+try:
+    driver.get(url=url)
+    time.sleep(2)
+    for i in range(4):
+        for i in range(10):
+            driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
+            time.sleep(2)
+        button=driver.find_element("class name","more__button")
+        time.sleep(5)
+        button.click()
+        time.sleep(5)
+    html = driver.page_source
+    time.sleep(5)
+    soup=BeautifulSoup(html,'lxml')
+    resp1=soup.find("div",class_="serp-list")
+    index=0
+    for i in range(1100):
+        s=str(i)
+        s1='serp-item_pos_' + s
+        resp2=resp1.find("div",class_=s1)
+        resp3=resp2.find("div",class_="serp-item__preview")
+        resp4=resp3.find("a",class_="serp-item__link")
+        url_img=resp4.find("img",class_="serp-item__thumb justifier__thumb").get("src")
+        img=requests.get('https:' + url_img).content
+        if not os.path.isdir("dataset"):
+            os.mkdir("dataset")
+        print(index)
+        a=str(index)
+        if index<10:
+            ul='dataset/tiger/' +'000'+ a + '.jpg'
+        if 10<index<100:
+            ul='dataset/tiger/' +'00'+ a + '.jpg'
+        if 100<index<1000:
+            ul='dataset/tiger/' +'0'+ a + '.jpg'
+        if 1000<index<10000:
+            ul='dataset/tiger/' + a + '.jpg'
+        if not os.path.isdir("dataset/tiger"):
+            os.mkdir("dataset/tiger")
+        with open(ul,'wb') as handler:
+            handler.write(img)
+        index=index+1
+        if not os.path.isdir("dataset/leopard"):
+            os.mkdir("dataset/leopard")
+except Exception as ex:
+    print(ex)
+finally:
+    driver.close()
+    driver.quit()
+
