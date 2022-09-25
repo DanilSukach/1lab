@@ -15,7 +15,7 @@ def scraping(url):
     array=[]
     try:
         driver.get(url=url_full)
-        time.sleep(2)
+        time.sleep(5)
         for i in range(4):
             for i in range(10):
                 driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
@@ -37,24 +37,22 @@ def scraping(url):
             resp_3=resp_2.find("a",class_="serp-item__link")
             url_img=resp_3.find("img",class_="serp-item__thumb justifier__thumb").get("src")
             if not url_img in array:
-                array.append(url_img)
-            else:
-                break   
-            print(array[i])
-            img=requests.get('https:' + array[i]).content
-            print(index)
-            a=str(index)
-            if index < 10:
-                ul='dataset/' + url + '/' +'000'+ a + '.jpg'
-            if 10 < index < 100:
-                ul='dataset/' + url + '/' +'00'+ a + '.jpg'
-            if 100 < index < 1000:
-                ul='dataset/' + url + '/' +'0'+ a + '.jpg'
-            if 1000 < index < 10000:
-                ul='dataset/' + url + '/' + a + '.jpg'
-            with open(ul,'wb') as handler:
-                handler.write(img)
-            index += 1
+                array.append(url_img)  
+                print(array[i])
+                img=requests.get('https:' + array[i]).content
+                print(index)
+                a=str(index)
+                if index < 10:
+                    ul='dataset/' + url + '/' +'000'+ a + '.jpg'
+                if 10 < index < 100:
+                    ul='dataset/' + url + '/' +'00'+ a + '.jpg'
+                if 100 < index < 1000:
+                    ul='dataset/' + url + '/' +'0'+ a + '.jpg'
+                if 1000 < index < 10000:
+                    ul='dataset/' + url + '/' + a + '.jpg'
+                with open(ul,'wb') as handler:
+                    handler.write(img)
+                index += 1
     except Exception as ex:
         print(ex)
     finally:
