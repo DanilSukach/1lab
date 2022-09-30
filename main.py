@@ -4,6 +4,7 @@ from array import array
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+import cv2
 
 def scraping(url):
     if not os.path.isdir("dataset"):
@@ -19,7 +20,7 @@ def scraping(url):
         for i in range(4):
             for i in range(10):
                 driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-                time.sleep(5)
+                time.sleep(2)
             button=driver.find_element("class name","more__button")
             time.sleep(5)
             button.click()
@@ -42,14 +43,7 @@ def scraping(url):
                 img=requests.get('https:' + array[i]).content
                 print(index)
                 a=str(index)
-                if index < 10:
-                    ul='dataset/' + url + '/' +'000'+ a + '.jpg'
-                if 10 < index < 100:
-                    ul='dataset/' + url + '/' +'00'+ a + '.jpg'
-                if 100 < index < 1000:
-                    ul='dataset/' + url + '/' +'0'+ a + '.jpg'
-                if 1000 < index < 10000:
-                    ul='dataset/' + url + '/' + a + '.jpg'
+                ul='dataset/' + url + '/' + a.zfill(4) +'.jpg'
                 with open(ul,'wb') as handler:
                     handler.write(img)
                 index += 1
@@ -59,6 +53,21 @@ def scraping(url):
         driver.close()
         driver.quit()
 
-scraping("leopard")
+def jpg(url):
+    if not os.path.isdir("dataset1"):
+        os.mkdir("dataset1")
+    if not os.path.isdir("dataset1/" + url):
+        os.mkdir("dataset1/" + url)
+    for i in range(1100):
+        a=str(i)
+        filename=str('dataset/' + url + '/' + a.zfill(4) +'.jpg')
+        image=cv2.imread(filename)
+        filewrite=str('dataset1/' + url + '/' + a.zfill(4) +'.jpg')
+        cv2.imwrite(filewrite,image)
+
+
 scraping("tiger")
+jpg("leopard")
+jpg("tiger")
+
 
